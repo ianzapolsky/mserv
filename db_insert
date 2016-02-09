@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+  echo "usage: ./db_insert <directory>";
+fi
+
+DIR=$1
+
+if [ -d "$DIR" ]; then
+
+  for f in $DIR/*; do
+    eyeD3 "$f" --no-color -l critical > $$
+
+    title=$(cat $$ | grep title | cut -d: -f2)
+    artist=$(cat $$ | grep artist | grep -v album | cut -d: -f2)
+    album=$(cat $$ | grep album | grep -v artist | cut -d: -f2)
+    albumartist=$(cat $$ | grep 'album artist' | cut -d: -f2)
+    genre=$(cat $$ | grep genre | cut -d: -f3 | cut -d'(' -f1)
+    track=$(cat $$ | grep track | cut -d/ -f1 | cut -d: -f2)
+
+    title="${title:1}"
+    artist="${artist:1}"
+    album="${album:1}"
+    albumartist="${albumartist:1}"
+    genre="${genre:1}"
+    track="${track:1}"
+    url="http://s3.amazonaws.com/cherrymusic/$(basename $f | tr '\n' ' ')"
+
+    php db_insert.php "$title" "$artist" "$album" "$albumartist" "$genre" "$track" "$url"
+    #aws s3 cp "$f" s3://cherrymusic/
+  done
+
+  rm $$
+
+fi
