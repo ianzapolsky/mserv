@@ -34,12 +34,26 @@
 
 ?>
 
-<body>
-  <div>
-    <ul>
-      <?php
-        render();
-      ?>
-    </ul>
-  </div>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Zapolsky Music Library</title>
+    <meta content="width=device-width, initial-scale=0.6" name="viewport">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+  </head>
+
+  <body>
+    <div id="wrapper">
+      <h1>Zapolsky Music Library</h1>
+      <audio preload></audio>
+      <ol>
+        <?php
+          render();
+        ?>
+      </ol>
+    </div>
+  </body>
+</html>
