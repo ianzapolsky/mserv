@@ -15,6 +15,7 @@
       die("Connection failed: " . $conn->connect_error);
     }
 
+
     $sql = 'SELECT distinct artist FROM song ORDER BY artist';
 
     $result = $conn->query($sql);
@@ -22,7 +23,7 @@
     if ($result->num_rows > 0) {
       // output data of each row
       while($row = $result->fetch_assoc()) {
-        echo "<li><a href=\"/test.php?artist=".$row["artist"]."\">" . $row["artist"] . "</a></li>";
+        echo "<li><h5><a href=\"/player.php?artist=".$row["artist"]."\">" . $row["artist"] . "</a></h5></li>";
       }
     } else {
       echo "<li>0 results</li>";
@@ -46,14 +47,16 @@
   </head>
 
   <body>
-    <div id="wrapper">
+    <div class="container">
       <h1>Zapolsky Music Library</h1>
-      <audio preload></audio>
-      <ol>
-        <?php
-          render();
-        ?>
-      </ol>
+      <div class="container">
+        <audio preload></audio>
+        <ul>
+          <?php
+            render();
+          ?>
+        </ul>
+      </div>
     </div>
   </body>
 </html>
