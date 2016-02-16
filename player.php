@@ -6,9 +6,9 @@
      * initialize mysql connection
      */
     $conn = new mysqli(
-      getenv("AWS_MYSQL_DNS"),
-      getenv("AWS_MYSQLUSER"),
-      getenv("AWS_MYSQLPASS"),
+      getenv("AWS_MYSQL_HOST"),
+      getenv("AWS_MYSQL_USERNAME"),
+      getenv("AWS_MYSQL_PASSWORD"),
       "music"
     );
     if ($conn->connect_error) {
@@ -33,10 +33,12 @@
     if ($result->num_rows > 0) {
       // output data of each row
       while($row = $result->fetch_assoc()) {
-        echo "<li><a href=\"#\" data-src=\"". $row["url"] . "\">[Track " . $row["track"] . "] <i>". $row["title"] . "</i> by <strong>" . $row["artist"] ."</strong> from <strong>" . $row["album"] . "</strong></a></li>";
+        echo "<tr class=\"song\" data-album=\"" . $row["album"] . "\" data-artist=\"" . $row["artist"] . "\" data-src=\"" . $row["url"] . "\">
+                <td>" . $row["track"] . "</td><td>". $row["title"] . "</td><td>" . $row["artist"] ."</td><td>" . $row["album"] . "</td>
+              </tr>";
       }
     } else {
-      echo "<li>0 results</li>";
+      echo "<tr><td>0 results</tr></td>";
     }
 
     $conn->close();
@@ -51,34 +53,62 @@
     <meta charset="utf-8">
     <title>Zapolsky Music Library</title>
     <meta content="width=device-width, initial-scale=0.6" name="viewport">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/main.css">
 
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-    <script src="/audiojs/audio.min.js"></script>
+    <script src="/tablesorter/jquery.tablesorter.min.js"></script>
+    <script src="/audiojs/audio.js"></script>
     <script>
-      $(function() { 
-        // Setup the player to autoplay the next track
+
+      var loadAlbumArt = function(album, artist) {
+        console.log('Requesting new album art from Google...');
+        $.get('https://www.googleapis.com/customsearch/v1?q='+album+' '+artist+'&cx=012813865030616110872:qez66450mmo&imgColorType=color&searchType=image&key=AIzaSyBux1Byau1kSgaHkOTp4vYf97f7HIl1dJw', function(data) {
+          if (data.items.length > 0) {
+            var link = data.items[0].link;
+            var img = document.createElement('img');
+            $(img).attr('src', link)
+              .attr('width', '300')
+              .attr('height', '300');
+            $('#album-art-container').html($(img));
+          }
+        });
+      };
+
+      $(document).ready(function() {
+
+        var album = null;
+        var artist = null;
+
         var a = audiojs.createAll({
           trackEnded: function() {
-            var next = $('ol li.playing').next();
-            if (!next.length) next = $('ol li').first();
-            next.addClass('playing').siblings().removeClass('playing');
-            audio.load($('a', next).attr('data-src'));
+            var next = $('.song.playing').next();
+            if (!next.length) next = $('.song').first();
+            next.addClass('playing active').siblings().removeClass('playing active');
+            audio.load(next.attr('data-src'));
+            if (next.attr('data-album') !== album) {
+              loadAlbumArt(next.attr('data-album'), next.attr('data-artist'));
+            }
             audio.play();
           }
         });
-
         // Load in the first track
         var audio = a[0];
-            first = $('ol a').attr('data-src');
-        $('ol li').first().addClass('playing');
+            first = $('.song').attr('data-src');
+        $('.song').first().addClass('playing active');
+        album = $('.song').first().attr('data-album');
+        artist = $('.song').first().attr('data-artist');
+        loadAlbumArt(album, artist);
         audio.load(first);
 
         // Load in a track on click
-        $('ol li').click(function(e) {
+        $('.song').click(function(e) {
           e.preventDefault();
-          $(this).addClass('playing').siblings().removeClass('playing');
-          audio.load($('a', this).attr('data-src'));
+          $(this).addClass('playing active').siblings().removeClass('playing active');
+          audio.load($(this).attr('data-src'));
+          if ($(this).attr('data-album') !== album) {
+            loadAlbumArt($(this).attr('data-album'), $(this).attr('data-artist'));
+          }
           audio.play();
         });
         // Keyboard shortcuts
@@ -86,32 +116,52 @@
           var unicode = e.charCode ? e.charCode : e.keyCode;
              // right arrow
           if (unicode == 39) {
-            var next = $('li.playing').next();
-            if (!next.length) next = $('ol li').first();
+            var next = $('.song.playing').next();
+            if (!next.length) next = $('.song').first();
             next.click();
             // back arrow
           } else if (unicode == 37) {
-            var prev = $('li.playing').prev();
-            if (!prev.length) prev = $('ol li').last();
+            var prev = $('.song.playing').prev();
+            if (!prev.length) prev = $('.song').last();
             prev.click();
             // spacebar
           } else if (unicode == 32) {
             audio.playPause();
           }
           return false;
-        })
+        });
+
       });
     </script>
   </head>
   <body>
-    <div id="wrapper">
+    <div class="container">
+
       <h1>Zapolsky Music Library</h1>
-      <audio preload></audio>
-      <ol>
-        <?php
-          get_music();
-        ?>
-      </ol>
+
+      <div class="container col-xs-6">
+        <audio preload></audio>
+      </div>
+
+      <div id="album-art-container" class="container col-xs-6">
+      </div>
+
+      <div class="container col-xs-12">
+      <br></br>
+        <table class="table table-condensed table-hover tablesorter">
+          <thead>
+            <tr>
+              <td>Track</td><td>Title</td><td>Artist</td><td>Album</td>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+              get_music();
+            ?>
+          </tbody>
+        </table
+      </div>
+
     </div>
   </body>
 </html>

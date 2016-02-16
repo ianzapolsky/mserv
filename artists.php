@@ -6,9 +6,9 @@
      * initialize mysql connection
      */
     $conn = new mysqli(
-      getenv("AWS_MYSQL_DNS"),
-      getenv("AWS_MYSQLUSER"),
-      getenv("AWS_MYSQLPASS"),
+      getenv("AWS_MYSQL_HOST"),
+      getenv("AWS_MYSQL_USERNAME"),
+      getenv("AWS_MYSQL_PASSWORD"),
       "music"
     );
     if ($conn->connect_error) {
@@ -23,10 +23,10 @@
     if ($result->num_rows > 0) {
       // output data of each row
       while($row = $result->fetch_assoc()) {
-        echo "<li><h5><a href=\"/player.php?artist=".$row["artist"]."\">" . $row["artist"] . "</a></h5></li>";
+        echo "<tr><td><h5><a href=\"/player.php?artist=".$row["artist"]."\">" . $row["artist"] . "</a></h5></td></tr>";
       }
     } else {
-      echo "<li>0 results</li>";
+      echo "<tr><td>0 results</td></tr>";
     }
 
     $conn->close();
@@ -50,12 +50,17 @@
     <div class="container">
       <h1>Zapolsky Music Library</h1>
       <div class="container">
+
         <audio preload></audio>
-        <ul>
+        <table class="table table-hover">
+          <tr>
+            <th>Artist</th>
+          </tr>
           <?php
             render();
           ?>
-        </ul>
+        </table>
+
       </div>
     </div>
   </body>
