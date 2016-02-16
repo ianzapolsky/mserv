@@ -130,16 +130,18 @@
             var next = $('.song.playing').next();
             if (!next.length) next = $('.song').first();
             next.click();
+            return false;
             // back arrow
           } else if (unicode == 37) {
             var prev = $('.song.playing').prev();
             if (!prev.length) prev = $('.song').last();
             prev.click();
+            return false;
             // spacebar
           } else if (unicode == 32) {
             audio.playPause();
+            return false;
           }
-          return false;
         });
 
       });
