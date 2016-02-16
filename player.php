@@ -83,7 +83,7 @@
       $(document).ready(function() {
 
         $('table').tablesorter({
-          sortList: [[0,0]],
+          sortList: [[3,0]],
           theme: 'dropbox',
           widgets: ['filter']
         });
@@ -148,7 +148,7 @@
   <body>
     <div class="container">
 
-      <h1>Zapolsky Music Library</h1>
+      <h1><a href="/artists.php">Zapolsky Music Library</a></h1>
 
       <div class="container col-xs-6">
         <audio preload></audio>
