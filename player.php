@@ -33,7 +33,7 @@
     if ($result->num_rows > 0) {
       // output data of each row
       while($row = $result->fetch_assoc()) {
-        echo "<tr class=\"song\" data-album=\"" . $row["album"] . "\" data-artist=\"" . $row["artist"] . "\" data-src=\"" . $row["url"] . "\">
+        echo "<tr class=\"song\" data-album=\"" . $row["album"] . "\" data-artist=\"" . $row["album_artist"] . "\" data-src=\"" . $row["url"] . "\">
                 <td>" . $row["track"] . "</td><td>". $row["title"] . "</td><td>" . $row["artist"] ."</td><td>" . $row["album"] . "</td>
               </tr>";
       }
@@ -53,12 +53,17 @@
     <meta charset="utf-8">
     <title>Zapolsky Music Library</title>
     <meta content="width=device-width, initial-scale=0.6" name="viewport">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.1/css/theme.dropbox.css">
     <link rel="stylesheet" href="/css/main.css">
 
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-    <script src="/tablesorter/jquery.tablesorter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.1/js/jquery.tablesorter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.1/js/jquery.tablesorter.widgets.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.1/js/widgets/widget-build-table.js"></script>
     <script src="/audiojs/audio.js"></script>
+
     <script>
 
       var loadAlbumArt = function(album, artist) {
@@ -76,6 +81,12 @@
       };
 
       $(document).ready(function() {
+
+        $('table').tablesorter({
+          sortList: [[0,0]],
+          theme: 'dropbox',
+          widgets: ['filter']
+        });
 
         var album = null;
         var artist = null;
@@ -146,7 +157,7 @@
       <div id="album-art-container" class="container col-xs-6">
       </div>
 
-      <div class="container col-xs-12">
+      <div class="container col-lg-12 col-xl-12 col-md-12 col-sm-12 col-xs-12">
       <br></br>
         <table class="table table-condensed table-hover tablesorter">
           <thead>

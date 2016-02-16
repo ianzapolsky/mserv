@@ -41,9 +41,24 @@
     <meta charset="utf-8">
     <title>Zapolsky Music Library</title>
     <meta content="width=device-width, initial-scale=0.6" name="viewport">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.1/css/theme.dropbox.css">
 
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.1/js/jquery.tablesorter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.1/js/jquery.tablesorter.widgets.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.21.1/js/widgets/widget-build-table.js"></script>
+
+    <script>
+      $(document).ready(function() {
+        $('table').tablesorter({
+          sortList: [[0,0]],
+          theme: 'dropbox',
+          widgets: ['filter']
+        });
+      });
+    </script>
   </head>
 
   <body>
@@ -52,13 +67,17 @@
       <div class="container">
 
         <audio preload></audio>
-        <table class="table table-hover">
-          <tr>
-            <th>Artist</th>
-          </tr>
+        <table class="table table-hover table-condensed tablesorter">
+          <thead>
+            <tr>
+              <th>Artist</th>
+            </tr>
+          </thead>
+          <tbody>
           <?php
             render();
           ?>
+          </tbody>
         </table>
 
       </div>
