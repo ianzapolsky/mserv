@@ -63,7 +63,7 @@
 
       var loadAlbumArt = function(album, artist) {
         console.log('Requesting new album art from Google...');
-        $.get('https://www.googleapis.com/customsearch/v1?q='+album+' '+artist+'&cx=012813865030616110872:qez66450mmo&imgColorType=color&searchType=image&key=AIzaSyBux1Byau1kSgaHkOTp4vYf97f7HIl1dJw', function(data) {
+        $.get('https://www.googleapis.com/customsearch/v1?q='+album+' '+artist+' album art&cx=012813865030616110872:qez66450mmo&imgColorType=color&searchType=image&key=AIzaSyBux1Byau1kSgaHkOTp4vYf97f7HIl1dJw', function(data) {
           if (data.items.length > 0) {
             var link = data.items[0].link;
             var img = document.createElement('img');
